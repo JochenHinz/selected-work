@@ -1,9 +1,10 @@
-# Selected work — spline-based parameterisation & mesh generation
+# Computational geometry and PDE-based simulation
 
-Animations and figures from work on analysis-suitable geometry for simulation:
-twin-screw machine parameterisation and the simulations it enables, plus
-multipatch parameterisation, tire sections, elliptic grid generation and
-coronary artery meshing.
+Selected animations, figures and mathematical models from work on analysis-suitable geometry and simulation:
+twin-screw machine parameterisation and the simulations it enables, elliptic
+PDE-based multipatch parameterisation, PDE-constrained shape optimisation,
+spline-based grid generation for boundary-plasma turbulence in the TCV tokamak,
+tire sections and coronary artery meshing.
 
 **View it here: https://jochenhinz.github.io/selected-work/**
 

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Jochen Hinz — Selected work: spline-based parameterisation</title>
+<title>Jochen Hinz — Computational geometry and PDE-based simulation</title>
 <style>
   :root {
     --ink:        #1a1d21;
@@ -20,6 +20,7 @@
       --rule: #2b3138; --surface: #14171a; --surface-2: #1b1f23;
       --accent: #6cc39a;
     }
+    .equation img { filter: invert(1); }
   }
   * { box-sizing: border-box; }
   body {
@@ -40,7 +41,17 @@
     letter-spacing: .01em;
   }
   h2 .tag { font-weight: 400; color: var(--ink-3); font-size: .85rem; margin-left: .5rem; }
+  .topic-section {
+    padding: 3.25rem 0 3.75rem;
+    border-bottom: 1px solid var(--rule);
+  }
+  .topic-section > h2 {
+    margin-top: 0; padding-left: .85rem;
+    border-left: 3px solid var(--accent);
+  }
   .lede { color: var(--ink-2); margin: 0 0 1.75rem; max-width: 68ch; }
+  .lede a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+  .lede a:hover { border-bottom-width: 2px; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 1.75rem; }
   h3 {
     font-size: .78rem; font-weight: 600; text-transform: uppercase;
@@ -53,12 +64,57 @@
     width: 100%; display: block; border-radius: 6px;
     background: var(--surface-2); border: 1px solid var(--rule);
   }
+  .plasma-video-stage {
+    aspect-ratio: 514 / 676;
+    display: flex;
+    align-items: center;
+  }
+  .plasma-video-stage video {
+    max-height: 100%;
+    object-fit: contain;
+  }
+  @media (max-width: 820px) {
+    .plasma-video-stage { aspect-ratio: auto; display: block; }
+  }
   figure img {
     width: 100%; display: block; border-radius: 6px;
     background: var(--surface-2); border: 1px solid var(--rule);
   }
   figcaption { margin-top: .6rem; font-size: .88rem; color: var(--ink-2); line-height: 1.5; }
   figcaption b { color: var(--ink); font-weight: 600; }
+  .equation-card {
+    margin: 1.75rem 0 0; padding: 1.35rem 1.5rem;
+    border: 1px solid var(--rule); border-radius: 6px; background: var(--surface-2);
+  }
+  .equation-card summary {
+    cursor: pointer; color: var(--ink); font-weight: 600;
+  }
+  .equation-card summary::marker { color: var(--accent); }
+  .equation-card[open] summary { margin-bottom: .5rem; }
+  .equation {
+    margin: .9rem 0; padding: .35rem 0;
+  }
+  .equation img {
+    display: block; width: 100%; max-width: 660px; height: auto; margin: 0 auto;
+  }
+  .equation-note { margin: 0; color: var(--ink-2); font-size: .9rem; }
+  .math-display {
+    margin: .9rem 0; overflow-x: auto; padding: .4rem 0; text-align: center;
+  }
+  .math-display math { font-size: 1.05rem; white-space: nowrap; }
+  .math-display + .math-display { margin-top: .35rem; }
+  .math-inline { display: inline-block; line-height: 1; vertical-align: -.08em; }
+  .math-inline math { font-size: 1em; }
+  .feature-figure { max-width: 760px; margin: 0 auto; }
+  .control-figure { max-width: 600px; }
+  .shape-sequence {
+    display: grid; grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem; max-width: 760px; margin: 0 auto;
+  }
+  .shape-sequence figcaption { text-align: center; }
+  @media (max-width: 620px) {
+    .shape-sequence { grid-template-columns: 1fr; max-width: 420px; }
+  }
   .refs { margin-top: 3.5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-size: .88rem; color: var(--ink-2); }
   .refs ol { padding-left: 1.2rem; margin: .6rem 0 0; }
   .refs li { margin-bottom: .5rem; }
@@ -70,8 +126,8 @@
 <div class="wrap">
 
 <header>
-  <h1>Spline-based parameterisation &amp; mesh generation</h1>
-  <p class="sub">Selected animations from work on analysis-suitable geometry for simulation.</p>
+  <h1>Computational geometry and PDE-based simulation</h1>
+  <p class="sub">Selected work on spline-based parameterisation, mesh generation and coupled multiphysics models.</p>
   <p class="meta">
     Jochen Hinz &nbsp;·&nbsp;
     <a href="https://github.com/JochenHinz">github.com/JochenHinz</a> &nbsp;·&nbsp;
@@ -79,6 +135,7 @@
   </p>
 </header>
 
+<section class="topic-section">
 <h2>Twin-screw machines <span class="tag">EU Horizon 2020 &ldquo;MOTOR&rdquo; · TU Delft</span></h2>
 <p class="lede">
   Twin-screw compressors and extruders are a hard parameterisation problem: the fluid domain
@@ -136,6 +193,396 @@
 
 </div>
 
+<p class="lede" style="margin-top: 1.75rem">
+  The non-isothermal simulations couple the flow and temperature fields in both directions. The
+  velocity transports heat and produces heat through viscous dissipation; temperature and shear
+  rate determine the polymer viscosity, which feeds back into the momentum balance.
+</p>
+
+<details class="equation-card">
+  <summary>Coupled Navier–Stokes and heat equations</summary>
+
+  <h3>Incompressible flow</h3>
+  <div class="math-display">
+    <math display="block" aria-label="Incompressibility and momentum equations">
+      <mo>∇</mo><mo>·</mo><mi mathvariant="bold">u</mi><mo>=</mo><mn>0</mn><mo>,</mo>
+      <mspace width="1.5em"/>
+      <mi>ρ</mi><mo stretchy="false">(</mo>
+      <mfrac><mrow><mo>∂</mo><mi mathvariant="bold">u</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+      <mo>+</mo><mi mathvariant="bold">u</mi><mo>·</mo><mo>∇</mo><mi mathvariant="bold">u</mi>
+      <mo stretchy="false">)</mo><mo>−</mo><mo>∇</mo><mo>·</mo><mi>σ</mi><mo>=</mo><mn mathvariant="bold">0</mn><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Constitutive stress relation for the polymer melt">
+      <mi>σ</mi><mo stretchy="false">(</mo><mi mathvariant="bold">u</mi><mo>,</mo><mi>p</mi><mo stretchy="false">)</mo>
+      <mo>=</mo><mo>−</mo><mi>p</mi><mi>I</mi><mo>+</mo><mn>2</mn>
+      <mi>η</mi><mo stretchy="false">(</mo><mover><mi>γ</mi><mo>˙</mo></mover><mo>,</mo><mi>T</mi><mo stretchy="false">)</mo>
+      <mi>ε</mi><mo stretchy="false">(</mo><mi mathvariant="bold">u</mi><mo stretchy="false">)</mo><mo>,</mo>
+      <mspace width="1.2em"/>
+      <mi>ε</mi><mo stretchy="false">(</mo><mi mathvariant="bold">u</mi><mo stretchy="false">)</mo>
+      <mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac>
+      <mo stretchy="false">(</mo><mo>∇</mo><mi mathvariant="bold">u</mi><mo>+</mo>
+      <msup><mo stretchy="false">(</mo><mo>∇</mo><mi mathvariant="bold">u</mi><mo stretchy="false">)</mo><mi>T</mi></msup><mo stretchy="false">)</mo><mo>.</mo>
+    </math>
+  </div>
+
+  <h3>Temperature transport</h3>
+  <div class="math-display">
+    <math display="block" aria-label="Heat equation with advection and viscous dissipation">
+      <mi>ρ</mi><msub><mi>c</mi><mi>p</mi></msub><mo stretchy="false">(</mo>
+      <mfrac><mrow><mo>∂</mo><mi>T</mi></mrow><mrow><mo>∂</mo><mi>t</mi></mrow></mfrac>
+      <mo>+</mo><mi mathvariant="bold">u</mi><mo>·</mo><mo>∇</mo><mi>T</mi><mo stretchy="false">)</mo>
+      <mo>−</mo><mi>κ</mi><mi mathvariant="normal">Δ</mi><mi>T</mi>
+      <mo>−</mo><mn>2</mn><mi>η</mi><mo>∇</mo><mi mathvariant="bold">u</mi><mo>:</mo>
+      <mi>ε</mi><mo stretchy="false">(</mo><mi mathvariant="bold">u</mi><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn><mo>.</mo>
+    </math>
+  </div>
+  <p class="equation-note">
+    These are Eqs. (22)–(26) of Hinz et al. (2020). The heat equation receives the computed velocity
+    through its advection term and converts mechanical work into heat through viscous dissipation.
+    The Cross–WLF law makes the viscosity η depend on temperature and shear rate, so the updated
+    temperature changes the stress tensor and therefore the next flow solution. The paper resolves
+    this two-way coupling with a fixed-point iteration inside a stabilized space–time finite-element
+    formulation.
+  </p>
+</details>
+
+</section>
+
+<section class="topic-section">
+<h2>Elliptic grid generation and parametric control <span class="tag">TU Delft · EPFL</span></h2>
+
+<h3>From a convex patch layout to the physical region</h3>
+
+<p class="lede">
+  The construction begins with a convex control domain assembled from simple quadrilateral
+  patches. A boundary correspondence places its outer boundary on the target geometry, and the
+  elliptic grid-generation problem determines the map in the interior. The colored regions below
+  show how the patch topology is preserved: shared edges in the control domain become conforming
+  interfaces in the curved physical region, while the grid lines adapt smoothly to its boundary.
+</p>
+
+<div class="grid">
+  <figure>
+    <img src="images/pag_controlmap.png" alt="Convex multipatch control domain divided into eight colored quadrilateral spline patches">
+    <figcaption><b>Convex control domain.</b> Eight quadrilateral patches form a simple domain on
+      which the elliptic problem is posed. Colors identify corresponding patches, and the red edge
+      marks one segment of the prescribed outer boundary.</figcaption>
+  </figure>
+  <figure>
+    <img src="images/pag.png" alt="Curved physical region parameterized by eight corresponding colored quadrilateral spline patches">
+    <figcaption><b>Elliptically generated physical parameterisation.</b> The same patch layout is
+      transported into the target region. The outer boundary is matched exactly, while the
+      elliptic solve determines the interior grid and the shared patch interfaces.</figcaption>
+  </figure>
+</div>
+
+<details class="equation-card">
+  <summary>Mathematical formulation and multipatch discretisation</summary>
+
+<p class="lede">
+  Given only a spline description of a domain boundary, the aim is to construct a bijective map
+  <b>x</b> from a convex polygonal parameter domain
+  <span class="math-inline"><math aria-label="Omega hat"><mover accent="true"><mi>Ω</mi><mo>^</mo></mover></math></span>
+  into the physical domain Ω. The starting point is the Radó–Kneser–Choquet theorem: a harmonic map
+  from Ω into a convex
+  <span class="math-inline"><math aria-label="Omega hat"><mover accent="true"><mi>Ω</mi><mo>^</mo></mover></math></span>
+  is a diffeomorphism in
+  the interior. The parameterisation is therefore sought as the inverse of a harmonic map.
+</p>
+
+<h3>From inverse harmonicity to an elliptic PDE</h3>
+
+<p class="lede">
+  Pulling the harmonic problem back to the fixed parameter domain produces a quasilinear elliptic
+  system in nondivergence form. Its coefficients are determined by the metric tensor of the
+  unknown map, so the geometry and the differential operator must be solved together.
+</p>
+
+<div class="equation-section">
+  <div class="math-display">
+    <math display="block" aria-label="The inverse map is harmonic in the physical domain and equals the inverse boundary correspondence on its boundary">
+      <mi mathvariant="normal">Δ</mi><msup><mi mathvariant="bold">x</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo>=</mo><mn>0</mn>
+      <mspace width="1.2em"/><mtext>in</mtext><mspace width=".5em"/><mi>Ω</mi><mo>,</mo>
+      <mspace width="1.2em"/><msup><mi mathvariant="bold">x</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup>
+      <mo>=</mo><msup><mi mathvariant="bold">F</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup>
+      <mspace width=".6em"/><mtext>on</mtext><mspace width=".5em"/><mo>∂</mo><mi>Ω</mi><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Pulled-back quasilinear elliptic PDE in nondivergence form">
+      <mi>i</mi><mo>∈</mo><mo stretchy="false">{</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo stretchy="false">}</mo><mo>:</mo><mspace width=".8em"/>
+      <mi>A</mi><mo stretchy="false">(</mo><msub><mo>∂</mo><mi mathvariant="bold">ξ</mi></msub><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo>
+      <mo>:</mo><mi>H</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn><mo>,</mo>
+      <mspace width="1em"/><mi mathvariant="bold">x</mi><mo>=</mo><mi mathvariant="bold">F</mi>
+      <mspace width=".6em"/><mtext>on</mtext><mspace width=".5em"/><mo>∂</mo><mover><mi>Ω</mi><mo>^</mo></mover><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Definition of the elliptic coefficient matrix A and metric coefficients g i j">
+      <mi>A</mi><mo stretchy="false">(</mo><msub><mo>∂</mo><mi mathvariant="bold">ξ</mi></msub><mi mathvariant="bold">x</mi><mo stretchy="false">)</mo><mo>=</mo>
+      <mrow><mo stretchy="true">(</mo><mtable><mtr><mtd><msub><mi>g</mi><mn>22</mn></msub></mtd><mtd><mo>−</mo><msub><mi>g</mi><mn>12</mn></msub></mtd></mtr><mtr><mtd><mo>−</mo><msub><mi>g</mi><mn>12</mn></msub></mtd><mtd><msub><mi>g</mi><mn>11</mn></msub></mtd></mtr></mtable><mo stretchy="true">)</mo></mrow>
+      <mo>,</mo><mspace width="1.2em"/><msub><mi>g</mi><mrow><mi>i</mi><mi>j</mi></mrow></msub><mo>=</mo>
+      <msub><mo>∂</mo><msub><mi>ξ</mi><mi>i</mi></msub></msub><mi mathvariant="bold">x</mi><mo>·</mo>
+      <msub><mo>∂</mo><msub><mi>ξ</mi><mi>j</mi></msub></msub><mi mathvariant="bold">x</mi><mo>.</mo>
+    </math>
+  </div>
+  <p class="equation-note">
+    Pulling the Laplace problem back to
+    <span class="math-inline"><math aria-label="Omega hat"><mover accent="true"><mi>Ω</mi><mo>^</mo></mover></math></span>
+    yields the quasilinear elliptic system in nondivergence
+    form used in Eqs. (11)–(13) of Hinz &amp; Buffa (2024). Here <i>H</i> is the Hessian and the
+    coefficients <i>g</i><sub>ij</sub> are entries of the metric tensor induced by the unknown map.
+  </p>
+</div>
+
+<h3>A <i>C</i><sup>0</sup>-DG multipatch discretisation</h3>
+
+<p class="lede">
+  A multipatch spline space is generally only globally <i>C</i><sup>0</sup>, although its functions
+  are smooth inside each patch. The paper therefore evaluates the exact Hessian patch by patch and
+  weakly controls jumps of the map’s gradient across the interior patch interfaces Γ<sup>I</sup>.
+  This <i>C</i><sup>0</sup>-DG scheme is one of three discretisations presented in the paper. The other
+  two are mixed formulations: a Hessian-recovery approach based on ideas of Lakkis and Pryer, and a
+  rotation-free approach inspired by Gallistl. Together with the interior-penalty construction
+  developed from work by Blechschmidt, Herzog and Winkler, these methods are adapted to the
+  nonlinear multipatch parameterisation problem considered here.
+</p>
+
+<div class="equation-section">
+  <div class="math-display">
+    <math display="block" aria-label="C zero discontinuous Galerkin operator with patchwise Hessian terms and interface jump penalty">
+      <msubsup><mi mathvariant="script">L</mi><mi>η</mi><mtext>DG</mtext></msubsup>
+      <mo stretchy="false">(</mo><mi>B</mi><mo>,</mo><mi mathvariant="bold">x</mi><mo>,</mo><mi>φ</mi><mo stretchy="false">)</mo><mo>:=</mo>
+      <munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><msub><mi>N</mi><mi>p</mi></msub></munderover>
+      <munder><mo>∫</mo><msub><mover><mi>Ω</mi><mo>^</mo></mover><mi>k</mi></msub></munder>
+      <mi mathvariant="normal">Δ</mi><msub><mi>φ</mi><mi>i</mi></msub><mspace width=".25em"/><mi>B</mi><mo>:</mo><mi>H</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>i</mi></msub><mo stretchy="false">)</mo><mspace width=".25em"/><mi mathvariant="normal">d</mi><mi mathvariant="bold">ξ</mi>
+      <mo>+</mo><mi>η</mi>
+      <munderover><mo>∑</mo><mrow><msub><mi>γ</mi><mrow><mi>j</mi><mi>l</mi></mrow></msub><mo>∈</mo><msup><mi>Γ</mi><mi>I</mi></msup></mrow><mrow></mrow></munderover>
+      <mfrac><mn>1</mn><mrow><mi>h</mi><mo stretchy="false">(</mo><msub><mi>γ</mi><mrow><mi>j</mi><mi>l</mi></mrow></msub><mo stretchy="false">)</mo></mrow></mfrac>
+      <munder><mo>∫</mo><msub><mi>γ</mi><mrow><mi>j</mi><mi>l</mi></mrow></msub></munder>
+      <mo>[[</mo><mo>∇</mo><msub><mi>x</mi><mi>i</mi></msub><mo>]]</mo><mo>:</mo><mo>[[</mo><mo>∇</mo><msub><mi>φ</mi><mi>i</mi></msub><mo>]]</mo>
+      <mspace width=".25em"/><mi mathvariant="normal">d</mi><mi>Γ</mi><mo>.</mo>
+    </math>
+  </div>
+  <p class="equation-note">
+    This is Eq. (35) of the paper. Repeated component indices are summed. The first term enforces
+    the nondivergence-form PDE within every patch; the second is an interior-penalty term for jumps
+    in the normal gradient across interfaces. The parameter η is chosen sufficiently large.
+  </p>
+</div>
+
+<h3>Nonlinear root problem and Newton step</h3>
+
+<p class="lede">
+  After discretisation, the parameterisation is the root of a nonlinear residual. A damped Newton
+  method solves this system; a line search controls each update, while a small coefficient shift
+  stabilises intermediate maps that may still be severely folded.
+</p>
+
+<div class="equation-section">
+  <div class="math-display">
+    <math display="block" aria-label="Definition of the discrete nonlinear residual">
+      <msub><mi mathvariant="script">N</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow></msub>
+      <mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mi>h</mi></msub><mo>,</mo><msub><mi>φ</mi><mi>h</mi></msub><mo stretchy="false">)</mo><mo>:=</mo>
+      <msubsup><mi mathvariant="script">L</mi><mi>η</mi><mtext>DG</mtext></msubsup>
+      <mo stretchy="false">(</mo><mi>γ</mi><mo stretchy="false">(</mo><msubsup><mi>A</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow><mi mathvariant="bold">x</mi></msubsup><mo stretchy="false">)</mo>
+      <msubsup><mi>A</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow><mi mathvariant="bold">x</mi></msubsup><mo>,</mo>
+      <msub><mi mathvariant="bold">x</mi><mi>h</mi></msub><mo>,</mo><msub><mi>φ</mi><mi>h</mi></msub><mo stretchy="false">)</mo><mo>,</mo>
+      <mspace width="1em"/><msubsup><mi>A</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow><mi mathvariant="bold">x</mi></msubsup>
+      <mo>=</mo><mi>A</mi><mo stretchy="false">(</mo><msub><mo>∂</mo><mi mathvariant="bold">ξ</mi></msub><msub><mi mathvariant="bold">x</mi><mi>h</mi></msub><mo stretchy="false">)</mo><mo>+</mo><mi>μ</mi><mi>I</mi><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Discrete nonlinear root problem for the parameterisation">
+      <mtext>find</mtext><mspace width=".5em"/><msub><mi mathvariant="bold">x</mi><mi>h</mi></msub><mo>∈</mo><msubsup><mi mathvariant="script">U</mi><mi>h</mi><mi mathvariant="bold">F</mi></msubsup>
+      <mspace width=".8em"/><mtext>such that</mtext><mspace width=".8em"/>
+      <msub><mi mathvariant="script">N</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow></msub>
+      <mo stretchy="false">(</mo><msub><mi mathvariant="bold">x</mi><mi>h</mi></msub><mo>,</mo><msub><mi>φ</mi><mi>h</mi></msub><mo stretchy="false">)</mo><mo>=</mo><mn>0</mn>
+      <mspace width=".8em"/><mo>∀</mo><msub><mi>φ</mi><mi>h</mi></msub><mo>∈</mo><msubsup><mi mathvariant="script">U</mi><mi>h</mi><mn>0</mn></msubsup><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Newton root-finding problem for the discrete map">
+      <mtext>find</mtext><mspace width=".5em"/><mi>δ</mi><msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo>∈</mo><msubsup><mi mathvariant="script">U</mi><mi>h</mi><mn>0</mn></msubsup>
+      <mspace width=".8em"/><mtext>such that</mtext><mspace width=".8em"/>
+      <msubsup><mi mathvariant="script">N</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow><mo>′</mo></msubsup>
+      <mo stretchy="false">(</mo><msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo>,</mo><msub><mi>φ</mi><mi>h</mi></msub><mo>,</mo><mi>δ</mi><msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo stretchy="false">)</mo>
+      <mo>=</mo><mo>−</mo><msub><mi mathvariant="script">N</mi><mrow><mi>μ</mi><mo>,</mo><mi>h</mi></mrow></msub>
+      <mo stretchy="false">(</mo><msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo>,</mo><msub><mi>φ</mi><mi>h</mi></msub><mo stretchy="false">)</mo>
+      <mspace width=".8em"/><mo>∀</mo><msub><mi>φ</mi><mi>h</mi></msub><mo>∈</mo><msubsup><mi mathvariant="script">U</mi><mi>h</mi><mn>0</mn></msubsup><mo>.</mo>
+    </math>
+  </div>
+  <div class="math-display">
+    <math display="block" aria-label="Line-search update of the parameterisation">
+      <msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mrow><mi>k</mi><mo>+</mo><mn>1</mn></mrow></msubsup><mo>=</mo>
+      <msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo>+</mo><mi>κ</mi><mi>δ</mi><msubsup><mi mathvariant="bold">x</mi><mi>h</mi><mi>k</mi></msubsup><mo>,</mo>
+      <mspace width="1em"/><mn>0</mn><mo>&lt;</mo><mi>κ</mi><mo>≤</mo><mn>1</mn><mo>.</mo>
+    </math>
+  </div>
+  <p class="equation-note">
+    This is the discrete counterpart of Eqs. (25)–(26), with the paper’s operator
+    ℒ replaced by ℒ<sup>DG</sup><sub>η</sub> as prescribed for the <i>C</i><sup>0</sup>-DG scheme.
+    The prime denotes the Gâteaux derivative with respect to the map and κ is selected by a line
+    search. The coefficient shift <i>A</i><sub>μ</sub> = <i>A</i> + μ<i>I</i> stabilises severely folded
+    intermediate iterates.
+  </p>
+</div>
+</details>
+
+<h3>Parametric control</h3>
+
+<p class="lede">
+  Once the parameterisation problem has been established, a global control map changes the
+  curvilinear coordinate system in the convex parameter domain. Recomputing the elliptic map in
+  that coordinate system controls grid properties—including cell-size distribution and patch
+  interfaces—while preserving the prescribed physical boundary.
+</p>
+
+<figure class="feature-figure control-figure">
+  <img src="images/control-map-multipatch.png" alt="Diagram of the control-map approach connecting a reference patch, a multipatch parametric domain and the physical domain">
+  <figcaption><b>Parametric control on a multipatch domain.</b> Each square reference patch is
+    mapped into a shared convex parameter domain and from there into the physical geometry. The
+    global control map redistributes the coordinates before the elliptic parameterisation is
+    recomputed. The red outline follows one patch through the sequence of maps. Figure from Hinz
+    &amp; Buffa (2024), CC BY 4.0.</figcaption>
+</figure>
+
+</section>
+
+<section class="topic-section">
+<h2>PDE-constrained shape optimisation <span class="tag">TU Delft</span></h2>
+<p class="lede">
+  The geometry parameterisation can itself be included in a shape-optimisation problem as an
+  additional PDE constraint. In this cooling-element example, the design variables determine the
+  positions and radii of four active coolers. The objective reduces material and cooling costs while
+  constraining the heat-source temperature. The elliptic grid-generation PDE automatically updates
+  the analysis-suitable interior map whenever the boundary changes. A variable
+  <a href="https://doi.org/10.1016/j.cagd.2012.03.025">THB-spline basis</a> is adapted during the
+  optimisation loop, allowing local refinement where the evolving geometry or temperature solution
+  requires additional resolution.
+</p>
+
+<h3>Selected optimisation iterations</h3>
+
+<div class="shape-sequence">
+  <figure>
+    <img src="images/shape-opt-0.png" alt="Initial cooling-element geometry, temperature field and boundary-conforming spline grid">
+    <figcaption><b>Initial configuration</b></figcaption>
+  </figure>
+  <figure>
+    <img src="images/shape-opt-6.png" alt="Cooling-element design after optimisation iteration 4">
+    <figcaption><b>Iteration 4</b></figcaption>
+  </figure>
+  <figure>
+    <img src="images/shape-opt-18.png" alt="Cooling-element design after optimisation iteration 10">
+    <figcaption><b>Iteration 10</b></figcaption>
+  </figure>
+  <figure>
+    <img src="images/shape-opt-27.png" alt="Final cooling-element design after optimisation iteration 15">
+    <figcaption><b>Iteration 15 · final design</b></figcaption>
+  </figure>
+</div>
+
+<p class="lede">
+  Differentiating the state equation and the elliptic grid-generation equation propagates each
+  design change through both the physical solution and the geometry. The required geometry
+  sensitivity follows from a linear system involving the Jacobian of the grid-generation
+  residual, and the complete objective gradient is then evaluated efficiently with an adjoint
+  formulation.
+</p>
+
+<details class="equation-card">
+  <summary>Total gradient through the state and geometry maps</summary>
+  <div class="equation">
+    <img src="images/shape-gradient.png" alt="The total derivative of the objective J with respect to the design variables alpha, expanded through the physical state u and geometry map x">
+  </div>
+  <p class="equation-note">
+    The design variables <b>&alpha;</b> change the geometry map <b>x</b><sup><b>&alpha;</b></sup>, which
+    in turn changes the physical state <i>u</i><sup><b>&alpha;</b></sup> and the objective
+    <i>J</i><sup><b>&alpha;</b></sup>. Treating the elliptic parameterisation as an additional PDE
+    constraint makes the geometry sensitivity accessible through implicit differentiation. In
+    particular, write the discretised grid-generation PDE as
+    <i>F</i>(<b>x</b><sup><b>&alpha;</b></sup>, <b>&alpha;</b>) = 0. Differentiating this identity gives
+    (<i>&part;F</i>/<i>&part;</i><b>x</b>)(d<b>x</b><sup><b>&alpha;</b></sup>/d<b>&alpha;</b>)
+    = &minus;<i>&part;F</i>/<i>&part;</i><b>&alpha;</b>. Thus, the geometry sensitivity is obtained by
+    solving a linear system with the Jacobian of the elliptic grid-generation residual. The
+    right-hand side describes how a change in the design variables moves the prescribed boundary.
+    The complete objective gradient can then be evaluated efficiently with an adjoint formulation.
+    The displayed chain rule is Eq. (7) in Hinz et al. (2021).
+  </p>
+</details>
+
+</section>
+
+<section class="topic-section">
+<h2>Boundary-plasma turbulence in a tokamak <span class="tag">EPFL · Swiss Plasma Center</span></h2>
+<p class="lede">
+  A tokamak confines plasma in a torus using a strong magnetic field. Simulating the turbulent
+  boundary layer is difficult because the plasma dynamics are strongly anisotropic: structures
+  extend along magnetic field lines, while the vessel wall, divertor and baffles create a complex
+  cross-section. My contribution was the spline-based, boundary-fitted curvilinear grid that lets
+  the GBS plasma code retain its structured finite-difference scheme while representing the
+  realistic wall of the TCV tokamak.
+</p>
+
+<p class="lede">
+  GBS evolves the <b>drift-reduced Braginskii equations</b>, using fourth-order central finite
+  differences in space on staggered three-dimensional grids and explicit Runge–Kutta time
+  integration. Rewriting these equations on a curvilinear grid introduces geometric terms: metric
+  coefficients and Christoffel symbols built from first and second derivatives of the coordinate
+  map. The globally <i>C</i><sup>2</sup>-continuous bivariate spline parameterisation made those
+  derivatives directly available at every grid point. The required geometric quantities could
+  therefore be evaluated from the higher-order spline map itself, instead of reconstructing its
+  derivatives with additional finite-difference stencils. This direct connection between the smooth
+  geometry representation and the finite-difference solver was a central advantage of the method.
+</p>
+
+<div class="grid">
+
+  <figure>
+    <div class="plasma-video-stage">
+      <video controls preload="metadata" playsinline poster="videos/tcv_electron_pressure.jpg">
+        <source src="videos/tcv_electron_pressure.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <figcaption><b>Electron pressure in a poloidal cross-section.</b> This is a vertical slice
+      through the torus, as if the device had been cut through its centre. The colour shows the
+      electron pressure, <i>p</i><sub>e</sub>, as the simulated plasma develops. The white curve is
+      the magnetic separatrix: inside it, magnetic field lines close on themselves; below its
+      X-point, the two legs lead towards the divertor. The inward features on the side walls are
+      baffles designed to restrict neutral-particle exchange between the main plasma and divertor
+      regions.</figcaption>
+  </figure>
+
+  <figure>
+    <div class="plasma-video-stage">
+      <video controls preload="metadata" playsinline poster="videos/tcv_parallel_current.jpg">
+        <source src="videos/tcv_parallel_current.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <figcaption><b>Parallel-current fluctuations on the full torus.</b> Red and blue show
+      fluctuations of electric current parallel to the magnetic field; the colour range is
+      deliberately saturated so the weaker activity in the divertor remains visible. The animation
+      first shows the complete toroidal domain. It then removes the core visually, exposing the way
+      turbulent structures stretch around the toroidal direction along the magnetic field.</figcaption>
+  </figure>
+
+</div>
+
+<p class="lede" style="margin-top: 1.25rem">
+  These were the first GBS turbulence simulations of TCV with a realistic wall including baffles.
+  Neutral particles were included in the simulation, although they are not displayed here. Plasma
+  simulation and visualisation by Louis N. Stenger at the Swiss Plasma Center; spline-based grid
+  generation by Jochen Hinz.
+</p>
+
+</section>
+
+<section class="topic-section">
 <h2>Other geometries <span class="tag">EPFL · industrial and biomedical collaborations</span></h2>
 <p class="lede">
   The same parameterisation machinery in other settings. The method takes a boundary description
@@ -173,9 +620,19 @@
 
 </div>
 
+</section>
+
 <div class="refs">
   <strong>Related publications</strong>
   <ol>
+    <li>J. Hinz, A. Buffa.
+      <a href="https://doi.org/10.1007/s00366-024-01997-x">On the use of elliptic PDEs for the
+      parameterisation of planar multipatch domains: Part 1: Numerical algorithms and foundations
+      of parametric control</a>. <em>Engineering with Computers</em> <b>40</b> (2024) 3735&ndash;3764.</li>
+    <li>J. Hinz, A. Jaeschke, M. M&ouml;ller, C. Vuik.
+      <a href="https://doi.org/10.1016/j.cma.2021.113685">The role of PDE-based parameterization
+      techniques in gradient-based IGA shape optimization applications</a>.
+      <em>Computer Methods in Applied Mechanics and Engineering</em> <b>378</b> (2021) 113685.</li>
     <li>J. Hinz, J. Helmig, M. Möller, S. Elgeti.
       <a href="https://doi.org/10.1016/j.cma.2019.112740">Boundary-conforming finite element methods
       for twin-screw extruders using spline-based parameterization techniques</a>.
@@ -186,6 +643,10 @@
       <em>Computer Aided Geometric Design</em> <b>65</b> (2018) 48–75.</li>
     <li>J. Hinz, M. Möller, C. Vuik. Spline-based parameterization techniques for twin-screw machine
       geometries. <em>IOP Conf. Ser.: Mater. Sci. Eng.</em> <b>425</b> (2018).</li>
+    <li>L. N. Stenger, J. Hinz, A. Buffa, P. Ricci.
+      <a href="https://doi.org/10.1088/1361-6587/ae27f8">Simulation of boundary plasma turbulence
+      with realistic wall geometry</a>.
+      <em>Plasma Physics and Controlled Fusion</em> <b>67</b> (2025) 125011.</li>
   </ol>
 </div>
 

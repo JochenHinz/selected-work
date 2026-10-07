@@ -105,6 +105,7 @@
     display: block; width: 100%; max-width: 660px; height: auto; margin: 0 auto;
   }
   .equation-note { margin: 0; color: var(--ink-2); font-size: .9rem; }
+  .equation-note a { color: var(--accent); }
   .math-display {
     margin: .9rem 0; overflow-x: auto; padding: .4rem 0; text-align: center;
   }
@@ -209,6 +210,21 @@
   Spline parameterisation, mesh generation and visualisation by Jochen Hinz.
   This is an independent, unpublished geometry and meshing demonstration.
 </p>
+
+<details class="equation-card" id="w7x-method">
+  <summary>Additional information: five-patch disc mapping</summary>
+  <p class="equation-note">
+    Each cross-sectional mesh starts from a unit disc covered by five quadrilateral spline
+    patches. At each toroidal angle, this control domain is mapped onto the corresponding
+    physical cross-section using the inversely harmonic mapping approach: the inverse map
+    from the physical cross-section back to the disc is required to be harmonic, subject to
+    the prescribed boundary correspondence. Solving the resulting elliptic grid-generation
+    problem determines the interior spline map. Sampling that map gives the cross-sectional
+    quadrilateral mesh used in the three-dimensional construction. The
+    <a href="#elliptic-grid-generation">elliptic grid generation and parametric control section below</a>
+    explains the inverse-harmonicity requirement and discretisation in greater detail.
+  </p>
+</details>
 </section>
 
 <section class="topic-section">
@@ -326,7 +342,7 @@
 
 </section>
 
-<section class="topic-section">
+<section class="topic-section" id="elliptic-grid-generation">
 <h2>Elliptic grid generation and parametric control <span class="tag">TU Delft · EPFL</span></h2>
 
 <h3>From a convex patch layout to the physical region</h3>

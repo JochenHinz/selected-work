@@ -11,8 +11,10 @@ tire sections and coronary artery meshing.
 
 The W7-X section is independent, unpublished work from October 2026. Its prescribed
 plasma boundary comes from the [public VMEC++ W7-X example](https://github.com/proximafusion/vmecpp/blob/main/examples/data/w7x.json).
-The videos show a sweep through 200 toroidal sections: first the spline
+The [third-party notices](third-party-notices.txt) retain the upstream copyright
+and MIT licence text. The videos show a sweep through 200 toroidal sections: first the spline
 parameterisations, then a conventional hexahedral mesh obtained by sampling and
 connecting the sections. The page includes static video posters and native playback controls.
+The videos sit side by side in equal-sized frames, stacking on narrow screens.
 
 Jochen Hinz — [github.com/JochenHinz](https://github.com/JochenHinz) — jochen.p.hinz@gmail.com
